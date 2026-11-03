@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id    Int    @id @default(autoincrement())
+  nome  String
+  email String @unique
+  senha String
+}
+
+model Professor {
+  id       Int       @id @default(autoincrement())
+  nome     String
+  email    String    @unique
+  horarios Horario[]
+}
+
+// UC = Unidade Curricular (disciplina)
+model Uc {
+  id           Int       @id @default(autoincrement())
+  nome         String
+  codigo       String    @unique
+  cargaHoraria Int
+  horarios     Horario[]
+}
+
+model Turma {
+  id       Int       @id @default(autoincrement())
+  nome     String    @unique // ex.: "ADS 3º semestre 2026/1"
+  periodo  String    // MANHA | TARDE | NOITE
+  horarios Horario[]
+}
+
+// Uma aula: a turma X tem a UC Y com o professor Z no dia D, no bloco B
+model Horario {
+  id          Int       @id @default(autoincrement())
+  diaSemana   Int       // 1 = segunda ... 6 = sabado
+  bloco       Int       // 1 = primeira aula, 2 = segunda aula
+  turma       Turma     @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+  turmaId     Int
+  uc          Uc        @relation(fields: [ucId], references: [id], onDelete: Cascade)
+  ucId        Int
+  professor   Professor @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  professorId Int
+
+  @@unique([turmaId, diaSemana, bloco])     // a turma so tem uma aula por slot
+  @@unique([professorId, diaSemana, bloco]) // o professor so da uma aula por slot
+}
