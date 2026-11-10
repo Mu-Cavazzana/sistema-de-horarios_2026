@@ -1,3 +1,5 @@
+VÍDEO DE DEFESA: https://www.youtube.com/watch?v=Jg0T-BzRqAs
+
 # Sistema de Horários
 
 Sistema web para montar a grade de horários das turmas da UniFil, substituindo as planilhas manuais.
